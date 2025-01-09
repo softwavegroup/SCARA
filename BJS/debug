@@ -1,0 +1,40 @@
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+import random
+import csv
+
+
+options = webdriver.ChromeOptions()
+options.add_argument('--disable-dev-shm-usage')
+options.add_argument('--no-sandbox')
+options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36')
+
+driver = webdriver.Chrome(options=options)
+url = 'https://www.bjs.com/search/grilling?pagenumber=%s'
+num_pages = 5
+
+fname = ("fuck") + ".csv"
+with open(fname, mode='w', newline='', encoding='utf-8') as csvfile:
+    writer = csv.writer(csvfile)
+    
+
+    writer.writerow(['Link', 'Name', 'Price', 'UPC', 'Model Number', 'stat'])
+
+    product_links = {}  # akhane save kor
+
+    for i in range(1, num_pages + 1):
+        driver.get(url % i)
+    wait = WebDriverWait(driver, 10)
+    wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "a.product-link")))
+
+    product_elements = driver.find_elements(By.CSS_SELECTOR, "a.product-link")
+
+    for product in product_elements:
+        link = product.get_attribute("href")
+        product_links[link] = None
+
+        time.sleep(random.uniform(5, 10) + (10 * (i % 3)))
